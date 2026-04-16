@@ -49,22 +49,24 @@ function processPayload_(payload) {
     return { status: 'error', message: 'Datos invalidos.' };
   }
 
-  var fecha = safeString(payload.fecha);
+  var fechaNovedad = safeString(payload.fecha_novedad);
+  var fechaReubicar = safeString(payload.fecha_reubicar);
   var cambio = safeString(payload.cambio);
   var descripcion = safeString(payload.descripcion);
   var medico = safeString(payload.medico);
 
-  if (!isValidDate_(fecha) || !isValidText_(cambio, 3, 120) || !isValidText_(descripcion, 5, 1000) || !isValidText_(medico, 3, 120)) {
+  if (!isValidDate_(fechaNovedad) || !isValidDate_(fechaReubicar) || !isValidText_(cambio, 3, 120) || !isValidText_(descripcion, 5, 1000) || !isValidText_(medico, 3, 120)) {
     return { status: 'error', message: 'Datos invalidos.' };
   }
 
-  fecha = sanitizeForSheet_(fecha);
+  fechaNovedad = sanitizeForSheet_(fechaNovedad);
+  fechaReubicar = sanitizeForSheet_(fechaReubicar);
   cambio = sanitizeForSheet_(cambio);
   descripcion = sanitizeForSheet_(descripcion);
   medico = sanitizeForSheet_(medico);
 
   var sheet = getOrCreateSheet_(SHEET_NAME);
-  sheet.appendRow([fecha, cambio, descripcion, medico]);
+  sheet.appendRow([fechaNovedad, fechaReubicar, cambio, descripcion, medico]);
 
   return { status: 'success' };
 }
@@ -81,7 +83,7 @@ function getOrCreateSheet_(sheetName) {
 
   if (!sheet) {
     sheet = spreadsheet.insertSheet(sheetName);
-    sheet.appendRow(['fecha', 'cambio', 'descripcion', 'medico']);
+    sheet.appendRow(['fecha_novedad', 'fecha_reubicar', 'cambio', 'descripcion', 'medico']);
   }
 
   return sheet;

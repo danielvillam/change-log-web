@@ -283,7 +283,7 @@
 
       <form id="change-form" aria-label="Registro de cambios médicos">
         <div class="field">
-          <label for="fecha">
+          <label for="fecha_novedad">
             <span class="field-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.8" />
@@ -292,9 +292,25 @@
                 <path d="M3 10H21" stroke="currentColor" stroke-width="1.8" />
               </svg>
             </span>
-            Fecha
+            Fecha novedad
           </label>
-          <input id="fecha" name="fecha" type="date" required />
+          <input id="fecha_novedad" name="fecha_novedad" type="date" required />
+        </div>
+
+        <div class="field">
+          <label for="fecha_reubicar">
+            <span class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.8" />
+                <path d="M8 3.5V7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M16 3.5V7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M3 10H21" stroke="currentColor" stroke-width="1.8" />
+                <path d="M8 14L10.4 16.4L16 10.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+            Fecha a reubicar
+          </label>
+          <input id="fecha_reubicar" name="fecha_reubicar" type="date" required />
         </div>
 
         <div class="field">
@@ -395,7 +411,8 @@
 
           const formData = new FormData(form);
           const payload = {
-            fecha: formData.get("fecha"),
+            fecha_novedad: formData.get("fecha_novedad"),
+            fecha_reubicar: formData.get("fecha_reubicar"),
             cambio: formData.get("cambio"),
             descripcion: formData.get("descripcion"),
             medico: formData.get("medico"),

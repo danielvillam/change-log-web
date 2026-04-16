@@ -24,7 +24,7 @@ El proyecto usa una estructura muy ligera:
 ## Flujo
 
 1. El usuario completa el formulario en el navegador.
-2. El frontend arma un JSON con `fecha`, `cambio`, `descripcion`, `medico` y `website`.
+2. El frontend arma un JSON con `fecha_novedad`, `fecha_reubicar`, `cambio`, `descripcion`, `medico` y `website`.
 3. El frontend envia el payload con `google.script.run` al backend de Apps Script.
 4. El backend valida que exista body y que el JSON sea correcto.
 5. El backend valida campos, descarta el honeypot `website` si viene lleno y sanitiza texto antes de guardar.
@@ -34,7 +34,8 @@ El proyecto usa una estructura muy ligera:
 
 El formulario captura estos campos:
 
-- `fecha`: fecha del cambio.
+- `fecha_novedad`: fecha de la novedad.
+- `fecha_reubicar`: fecha a reubicar.
 - `cambio`: tipo de cambio realizado.
 - `descripcion`: detalle del cambio.
 - `medico`: nombre del medico.
@@ -42,7 +43,8 @@ El formulario captura estos campos:
 
 La hoja guarda estas columnas:
 
-- fecha
+- fecha_novedad
+- fecha_reubicar
 - cambio
 - descripcion
 - medico
@@ -108,7 +110,8 @@ Para probar el flujo completo:
 
 ```json
 {
-  "fecha": "2026-04-14",
+  "fecha_novedad": "2026-04-14",
+  "fecha_reubicar": "2026-04-20",
   "cambio": "Ajuste en cirugia",
   "descripcion": "El medico estara apoyando otro proceso.",
   "medico": "Dr. Perez",

@@ -90,6 +90,17 @@ Para probar el flujo completo:
 3. Verifica que el despliegue este restringido al Workspace correcto.
 4. Abre `index.html` en el navegador con una cuenta autorizada y envia un registro de prueba.
 
+### Despliegue en Workspace (paso a paso)
+
+1. Abre el proyecto en Google Apps Script.
+2. Ve a `Deploy` > `New deployment`.
+3. En `Select type`, elige `Web app`.
+4. En `Execute as`, selecciona `Me`.
+5. En `Who has access`, selecciona `Only users in <tu-dominio>`.
+6. Haz clic en `Deploy` y autoriza permisos si te los solicita.
+7. Copia la URL terminada en `/exec` y pegala en `APPS_SCRIPT_URL` en `index.html`.
+8. Si actualizas el script luego, vuelve a `Deploy` > `Manage deployments` > `Edit` > `Deploy` para publicar cambios.
+
 ## Ejemplo de request
 
 ```json

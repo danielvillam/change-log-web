@@ -2,6 +2,8 @@
 
 Aplicacion web simple para registrar cambios en la programacion de medicos y guardar los datos en Google Sheets usando Google Apps Script.
 
+Nota: el frontend se sirve desde Apps Script para evitar CORS y permitir restriccion por Google Workspace.
+
 ## Arquitectura
 
 El proyecto usa una estructura muy ligera:
@@ -9,9 +11,11 @@ El proyecto usa una estructura muy ligera:
 - `index.html`
   - Formulario HTML.
   - Estilos CSS.
-  - Envio de datos con `fetch`.
+  - Envio de datos con `google.script.run`.
 - `apps-script.gs`
+  - Endpoint `doGet` para servir la interfaz.
   - Endpoint `doPost`.
+  - Funcion `submitChange` para recepcion desde la UI.
   - Validacion y sanitizacion de datos.
   - Persistencia en Google Sheets.
 - `icon.png`
@@ -21,7 +25,7 @@ El proyecto usa una estructura muy ligera:
 
 1. El usuario completa el formulario en el navegador.
 2. El frontend arma un JSON con `fecha`, `cambio`, `descripcion`, `medico` y `website`.
-3. El frontend envia el payload con `fetch` al endpoint de Apps Script.
+3. El frontend envia el payload con `google.script.run` al backend de Apps Script.
 4. El backend valida que exista body y que el JSON sea correcto.
 5. El backend valida campos, descarta el honeypot `website` si viene lleno y sanitiza texto antes de guardar.
 6. La fila se persiste en la hoja de calculo configurada.
@@ -51,7 +55,7 @@ La configuracion es manual y se hace directamente en el codigo.
 
 En `index.html`:
 
-- Reemplazar `APPS_SCRIPT_URL` por la URL real de la Web App desplegada.
+- No se requiere configurar URL de endpoint porque la UI se ejecuta dentro del mismo Web App.
 
 ### Backend
 
@@ -86,9 +90,8 @@ En `apps-script.gs`:
 Para probar el flujo completo:
 
 1. Publica el Apps Script como Web App.
-2. Copia la URL generada y pegala en `APPS_SCRIPT_URL`.
-3. Verifica que el despliegue este restringido al Workspace correcto.
-4. Abre `index.html` en el navegador con una cuenta autorizada y envia un registro de prueba.
+2. Verifica que el despliegue este restringido al Workspace correcto.
+3. Abre la URL `/exec` del deployment con una cuenta autorizada y envia un registro de prueba.
 
 ### Despliegue en Workspace (paso a paso)
 
@@ -98,7 +101,7 @@ Para probar el flujo completo:
 4. En `Execute as`, selecciona `Me`.
 5. En `Who has access`, selecciona `Only users in <tu-dominio>`.
 6. Haz clic en `Deploy` y autoriza permisos si te los solicita.
-7. Copia la URL terminada en `/exec` y pegala en `APPS_SCRIPT_URL` en `index.html`.
+7. Copia la URL terminada en `/exec` y usala como enlace de acceso para usuarios autorizados.
 8. Si actualizas el script luego, vuelve a `Deploy` > `Manage deployments` > `Edit` > `Deploy` para publicar cambios.
 
 ## Ejemplo de request

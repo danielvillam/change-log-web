@@ -1,5 +1,11 @@
 var SHEET_NAME = 'CambiosMedicos';
 
+function doGet() {
+  return HtmlService
+    .createHtmlOutputFromFile('index')
+    .setTitle('Cambios programacion de medicos');
+}
+
 function doPost(e) {
   try {
     if (!e || !e.postData || !e.postData.contents) {
@@ -17,38 +23,50 @@ function doPost(e) {
       return jsonOutput({ status: 'error', message: 'JSON invalido.' });
     }
 
-    var website = safeString(payload.website);
-    if (website) {
-      return jsonOutput({ status: 'error', message: 'Datos invalidos.' });
-    }
-
-    var fecha = safeString(payload.fecha);
-    var cambio = safeString(payload.cambio);
-    var descripcion = safeString(payload.descripcion);
-    var medico = safeString(payload.medico);
-
-    if (!isValidDate_(fecha) || !isValidText_(cambio, 3, 120) || !isValidText_(descripcion, 5, 1000) || !isValidText_(medico, 3, 120)) {
-      return jsonOutput({ status: 'error', message: 'Datos invalidos.' });
-    }
-
-    fecha = sanitizeForSheet_(fecha);
-    cambio = sanitizeForSheet_(cambio);
-    descripcion = sanitizeForSheet_(descripcion);
-    medico = sanitizeForSheet_(medico);
-
-    var sheet = getOrCreateSheet_(SHEET_NAME);
-    sheet.appendRow([
-      fecha,
-      cambio,
-      descripcion,
-      medico
-    ]);
-
-    return jsonOutput({ status: 'success' });
+    return jsonOutput(processPayload_(payload));
   } catch (error) {
     Logger.log('doPost error: ' + (error && error.message ? error.message : String(error)));
     return jsonOutput({ status: 'error', message: 'Error interno.' });
   }
+}
+
+function submitChange(payload) {
+  try {
+    return processPayload_(payload);
+  } catch (error) {
+    Logger.log('submitChange error: ' + (error && error.message ? error.message : String(error)));
+    return { status: 'error', message: 'Error interno.' };
+  }
+}
+
+function processPayload_(payload) {
+  if (!payload || typeof payload !== 'object') {
+    return { status: 'error', message: 'JSON invalido.' };
+  }
+
+  var website = safeString(payload.website);
+  if (website) {
+    return { status: 'error', message: 'Datos invalidos.' };
+  }
+
+  var fecha = safeString(payload.fecha);
+  var cambio = safeString(payload.cambio);
+  var descripcion = safeString(payload.descripcion);
+  var medico = safeString(payload.medico);
+
+  if (!isValidDate_(fecha) || !isValidText_(cambio, 3, 120) || !isValidText_(descripcion, 5, 1000) || !isValidText_(medico, 3, 120)) {
+    return { status: 'error', message: 'Datos invalidos.' };
+  }
+
+  fecha = sanitizeForSheet_(fecha);
+  cambio = sanitizeForSheet_(cambio);
+  descripcion = sanitizeForSheet_(descripcion);
+  medico = sanitizeForSheet_(medico);
+
+  var sheet = getOrCreateSheet_(SHEET_NAME);
+  sheet.appendRow([fecha, cambio, descripcion, medico]);
+
+  return { status: 'success' };
 }
 
 function jsonOutput(data) {

@@ -1,4 +1,5 @@
 var SHEET_NAME = 'CambiosMedicos';
+var ACCESS_TOKEN = 'change-log-web-token';
 
 function doPost(e) {
   try {
@@ -15,6 +16,10 @@ function doPost(e) {
 
     if (!payload || typeof payload !== 'object') {
       return jsonOutput({ status: 'error', message: 'JSON invalido.' });
+    }
+
+    if (!isValidToken_(payload.token)) {
+      return jsonOutput({ status: 'error', message: 'No autorizado.' });
     }
 
     var sheet = getOrCreateSheet_(SHEET_NAME);
@@ -57,4 +62,8 @@ function getOrCreateSheet_(sheetName) {
   }
 
   return sheet;
+}
+
+function isValidToken_(token) {
+  return String(token || '').trim() === ACCESS_TOKEN;
 }

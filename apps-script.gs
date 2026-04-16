@@ -22,13 +22,31 @@ function doPost(e) {
       return jsonOutput({ status: 'error', message: 'No autorizado.' });
     }
 
+    var website = safeString(payload.website);
+    if (website) {
+      return jsonOutput({ status: 'error', message: 'Datos invalidos.' });
+    }
+
+    var fecha = safeString(payload.fecha);
+    var cambio = safeString(payload.cambio);
+    var descripcion = safeString(payload.descripcion);
+    var medico = safeString(payload.medico);
+
+    if (!isValidDate_(fecha) || !isValidText_(cambio, 3, 120) || !isValidText_(descripcion, 5, 1000) || !isValidText_(medico, 3, 120)) {
+      return jsonOutput({ status: 'error', message: 'Datos invalidos.' });
+    }
+
+    fecha = sanitizeForSheet_(fecha);
+    cambio = sanitizeForSheet_(cambio);
+    descripcion = sanitizeForSheet_(descripcion);
+    medico = sanitizeForSheet_(medico);
+
     var sheet = getOrCreateSheet_(SHEET_NAME);
     sheet.appendRow([
-      payload.fecha || '',
-      payload.cambio || '',
-      payload.descripcion || '',
-      payload.medico || '',
-      payload.website || ''
+      fecha,
+      cambio,
+      descripcion,
+      medico
     ]);
 
     return jsonOutput({
@@ -66,4 +84,35 @@ function getOrCreateSheet_(sheetName) {
 
 function isValidToken_(token) {
   return String(token || '').trim() === ACCESS_TOKEN;
+}
+
+function safeString(value) {
+  if (value === null || value === undefined) return '';
+  return String(value).trim();
+}
+
+function isValidDate_(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
+  }
+
+  var parts = value.split('-');
+  var year = Number(parts[0]);
+  var month = Number(parts[1]);
+  var day = Number(parts[2]);
+
+  var date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+}
+
+function isValidText_(value, minLen, maxLen) {
+  return value.length >= minLen && value.length <= maxLen;
+}
+
+function sanitizeForSheet_(value) {
+  if (/^[=+\-@]/.test(value)) {
+    return "'" + value;
+  }
+
+  return value;
 }

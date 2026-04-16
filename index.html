@@ -94,10 +94,23 @@
         cursor: pointer;
       }
 
+      button[disabled] {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
       .status {
         min-height: 1.25rem;
         margin: 0;
         color: var(--muted);
+      }
+
+      .status--success {
+        color: #1e7a41;
+      }
+
+      .status--error {
+        color: #b42318;
       }
     </style>
   </head>
@@ -132,7 +145,7 @@
           <input id="website" name="website" type="text" autocomplete="off" />
         </div>
 
-        <button type="submit">Guardar cambio</button>
+        <button id="submit-btn" type="submit">Guardar cambio</button>
         <p id="status" class="status" aria-live="polite"></p>
       </form>
     </main>
@@ -144,10 +157,43 @@
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/REPLACE_ME/exec";
         const ACCESS_TOKEN = "change-log-web-token";
         const form = document.getElementById("change-form");
+        const submitBtn = document.getElementById("submit-btn");
         const statusEl = document.getElementById("status");
 
-        function setStatus(message) {
+        function setStatus(message, type) {
           statusEl.textContent = message;
+          statusEl.className = "status";
+          if (type === "success") {
+            statusEl.classList.add("status--success");
+          }
+          if (type === "error") {
+            statusEl.classList.add("status--error");
+          }
+        }
+
+        async function sendChange(payload) {
+          const response = await fetch(APPS_SCRIPT_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "text/plain;charset=UTF-8"
+            },
+            body: JSON.stringify(payload)
+          });
+
+          const responseText = await response.text();
+
+          let data;
+          try {
+            data = responseText ? JSON.parse(responseText) : {};
+          } catch (error) {
+            throw new Error("Respuesta no valida del servidor.");
+          }
+
+          if (!response.ok || data.status !== "success") {
+            throw new Error(data.message || "No se pudo guardar el cambio.");
+          }
+
+          return data;
         }
 
         form.addEventListener("submit", async function (event) {
@@ -163,25 +209,19 @@
             token: ACCESS_TOKEN
           };
 
+          submitBtn.disabled = true;
           setStatus("Enviando...");
 
           try {
-            const response = await fetch(APPS_SCRIPT_URL, {
-              method: "POST",
-              headers: {
-                "Content-Type": "text/plain;charset=UTF-8"
-              },
-              body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-              throw new Error("No se pudo enviar el formulario.");
-            }
+            await sendChange(payload);
 
             form.reset();
-            setStatus("Formulario enviado correctamente.");
+            setStatus("Formulario enviado correctamente.", "success");
           } catch (error) {
-            setStatus("Error al enviar el formulario.");
+            const message = error instanceof Error ? error.message : "Error al enviar el formulario.";
+            setStatus(message, "error");
+          } finally {
+            submitBtn.disabled = false;
           }
         });
       })();

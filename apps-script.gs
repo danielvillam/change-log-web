@@ -60,6 +60,7 @@ function doPost(e) {
       }
     });
   } catch (error) {
+    Logger.log('doPost error: ' + (error && error.message ? error.message : String(error)));
     return jsonOutput({ status: 'error', message: 'Error interno.' });
   }
 }

@@ -163,7 +163,6 @@
         "use strict";
 
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw29f5o-O7RKEoQ8zmcpFUAEZAz-Z5knHUGLY_c-mDywVu7-3tE1NJnKvSyTeNAFFToKA/exec";
-        const ACCESS_TOKEN = "change-log-web-token";
         const form = document.getElementById("change-form");
         const submitBtn = document.getElementById("submit-btn");
         const statusEl = document.getElementById("status");
@@ -213,8 +212,7 @@
             cambio: formData.get("cambio"),
             descripcion: formData.get("descripcion"),
             medico: formData.get("medico"),
-            website: formData.get("website"),
-            token: ACCESS_TOKEN
+            website: formData.get("website")
           };
 
           submitBtn.disabled = true;

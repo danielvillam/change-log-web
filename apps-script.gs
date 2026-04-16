@@ -1,5 +1,4 @@
 var SHEET_NAME = 'CambiosMedicos';
-var ACCESS_TOKEN = 'change-log-web-token';
 
 function doPost(e) {
   try {
@@ -16,10 +15,6 @@ function doPost(e) {
 
     if (!payload || typeof payload !== 'object') {
       return jsonOutput({ status: 'error', message: 'JSON invalido.' });
-    }
-
-    if (!isValidToken_(payload.token)) {
-      return jsonOutput({ status: 'error', message: 'No autorizado.' });
     }
 
     var website = safeString(payload.website);
@@ -49,16 +44,7 @@ function doPost(e) {
       medico
     ]);
 
-    return jsonOutput({
-      status: 'success',
-      data: {
-        fecha: payload.fecha,
-        cambio: payload.cambio,
-        descripcion: payload.descripcion,
-        medico: payload.medico,
-        website: payload.website
-      }
-    });
+    return jsonOutput({ status: 'success' });
   } catch (error) {
     Logger.log('doPost error: ' + (error && error.message ? error.message : String(error)));
     return jsonOutput({ status: 'error', message: 'Error interno.' });
@@ -77,14 +63,10 @@ function getOrCreateSheet_(sheetName) {
 
   if (!sheet) {
     sheet = spreadsheet.insertSheet(sheetName);
-    sheet.appendRow(['fecha', 'cambio', 'descripcion', 'medico', 'website']);
+    sheet.appendRow(['fecha', 'cambio', 'descripcion', 'medico']);
   }
 
   return sheet;
-}
-
-function isValidToken_(token) {
-  return String(token || '').trim() === ACCESS_TOKEN;
 }
 
 function safeString(value) {

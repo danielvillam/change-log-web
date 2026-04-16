@@ -112,12 +112,20 @@
       .status--error {
         color: #b42318;
       }
+
+      .hp {
+        position: absolute;
+        left: -9999px;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+      }
     </style>
   </head>
   <body>
     <main class="shell">
       <h1>Registro de cambios en programación de médicos</h1>
-      <p>Base inicial del proyecto para capturar cambios y conectarlos después con Google Apps Script.</p>
 
       <form id="change-form" aria-label="Registro de cambios médicos">
         <div class="field">
@@ -140,9 +148,9 @@
           <input id="medico" name="medico" type="text" required minlength="3" maxlength="120" placeholder="Nombre del médico" />
         </div>
 
-        <div class="field">
+        <div class="field hp" aria-hidden="true">
           <label for="website">Website</label>
-          <input id="website" name="website" type="text" autocomplete="off" />
+          <input id="website" name="website" type="text" autocomplete="off" tabindex="-1" />
         </div>
 
         <button id="submit-btn" type="submit">Guardar cambio</button>

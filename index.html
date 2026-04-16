@@ -5,15 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cambios programación de médicos</title>
     <link rel="icon" type="image/png" href="./icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
       :root {
         color-scheme: light;
-        --bg: #f5f7f5;
-        --card: #ffffff;
-        --ink: #1f2a1f;
-        --muted: #566656;
-        --line: #d9e2da;
-        --accent: #2f6f5e;
+        --bg: #eef3ef;
+        --bg-soft: #dce8df;
+        --card: rgba(255, 255, 255, 0.9);
+        --ink: #17322a;
+        --muted: #4e6d62;
+        --line: #c8d9cd;
+        --accent: #206d59;
+        --accent-2: #4da385;
+        --focus: rgba(32, 109, 89, 0.22);
       }
 
       * {
@@ -25,8 +31,11 @@
         min-height: 100vh;
         display: grid;
         place-items: center;
-        font-family: Arial, sans-serif;
-        background: var(--bg);
+        font-family: "Outfit", "Segoe UI", sans-serif;
+        background:
+          radial-gradient(circle at 8% 10%, #d8ece3 0%, transparent 36%),
+          radial-gradient(circle at 90% 90%, #d9e7f0 0%, transparent 40%),
+          linear-gradient(160deg, var(--bg) 0%, var(--bg-soft) 100%);
         color: var(--ink);
         padding: 24px;
       }
@@ -36,33 +45,82 @@
         width: 100%;
         background: var(--card);
         border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 24px;
+        border-radius: 22px;
+        padding: 30px;
+        backdrop-filter: blur(6px);
+        box-shadow: 0 18px 44px rgba(19, 46, 36, 0.13);
+        animation: card-enter 420ms ease-out;
       }
 
       h1 {
-        margin: 0 0 12px;
+        margin: 0;
+        font-size: clamp(1.35rem, 3vw, 1.9rem);
+        line-height: 1.15;
+        letter-spacing: 0.2px;
       }
 
-      p {
+      .subtitle {
         margin: 0;
-        line-height: 1.5;
+        font-size: 0.98rem;
+        line-height: 1.45;
         color: var(--muted);
       }
 
       form {
         display: grid;
-        gap: 14px;
-        margin-top: 18px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px 16px;
+        margin-top: 22px;
       }
 
       .field {
         display: grid;
-        gap: 6px;
+        gap: 7px;
+        opacity: 0;
+        transform: translateY(8px);
+        animation: field-enter 380ms ease-out forwards;
+      }
+
+      .field:nth-child(1) {
+        animation-delay: 50ms;
+      }
+
+      .field:nth-child(2) {
+        animation-delay: 90ms;
+      }
+
+      .field:nth-child(3) {
+        animation-delay: 130ms;
+      }
+
+      .field:nth-child(4) {
+        animation-delay: 170ms;
+      }
+
+      .field--full {
+        grid-column: 1 / -1;
       }
 
       label {
-        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        letter-spacing: 0.2px;
+      }
+
+      .field-icon {
+        width: 16px;
+        height: 16px;
+        color: var(--accent);
+        flex-shrink: 0;
+      }
+
+      .field-icon svg {
+        width: 100%;
+        height: 100%;
+        display: block;
       }
 
       input,
@@ -74,24 +132,41 @@
       input,
       textarea {
         width: 100%;
-        border: 1px solid #c7d4c9;
-        border-radius: 10px;
-        padding: 10px 12px;
+        border: 1px solid #bed2c2;
+        border-radius: 12px;
+        padding: 11px 13px;
+        background: rgba(255, 255, 255, 0.95);
+        transition: border-color 0.18s ease, box-shadow 0.18s ease;
+      }
+
+      input:focus,
+      textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--focus);
       }
 
       textarea {
-        min-height: 120px;
+        min-height: 128px;
         resize: vertical;
       }
 
       button {
+        grid-column: 1 / -1;
         border: 0;
-        border-radius: 10px;
-        padding: 10px 16px;
-        background: var(--accent);
+        border-radius: 12px;
+        padding: 11px 17px;
+        background: linear-gradient(120deg, var(--accent), var(--accent-2));
         color: #fff;
         font-weight: 700;
+        letter-spacing: 0.2px;
         cursor: pointer;
+        transition: transform 0.16s ease, box-shadow 0.16s ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 18px rgba(20, 84, 67, 0.22);
       }
 
       button[disabled] {
@@ -100,17 +175,51 @@
       }
 
       .status {
+        grid-column: 1 / -1;
         min-height: 1.25rem;
         margin: 0;
-        color: var(--muted);
+        color: #3e6154;
+        font-size: 0.94rem;
       }
 
       .status--success {
         color: #1e7a41;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .status--success::before {
+        content: "✓";
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        display: inline-grid;
+        place-items: center;
+        background: #1e7a41;
+        color: #fff;
+        font-size: 0.78rem;
+        font-weight: 700;
       }
 
       .status--error {
         color: #b42318;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .status--error::before {
+        content: "!";
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        display: inline-grid;
+        place-items: center;
+        background: #b42318;
+        color: #fff;
+        font-size: 0.78rem;
+        font-weight: 700;
       }
 
       .hp {
@@ -121,30 +230,112 @@
         opacity: 0;
         pointer-events: none;
       }
+
+      @keyframes card-enter {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes field-enter {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 720px) {
+        body {
+          padding: 14px;
+        }
+
+        .shell {
+          padding: 20px 16px;
+          border-radius: 16px;
+        }
+
+        form {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+
+        .field--full,
+        button,
+        .status {
+          grid-column: auto;
+        }
+
+        button {
+          width: 100%;
+        }
+      }
     </style>
   </head>
   <body>
     <main class="shell">
-      <h1>Registro de cambios en programación de médicos</h1>
+      <h1>Registro de cambios en la programación de los médicos</h1>
+      <p class="subtitle">Completa el formulario para registrar ajustes de agenda de forma clara y segura.</p>
 
       <form id="change-form" aria-label="Registro de cambios médicos">
         <div class="field">
-          <label for="fecha">Fecha</label>
+          <label for="fecha">
+            <span class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="1.8" />
+                <path d="M8 3.5V7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M16 3.5V7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M3 10H21" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+            </span>
+            Fecha
+          </label>
           <input id="fecha" name="fecha" type="date" required />
         </div>
 
         <div class="field">
-          <label for="cambio">Cambio</label>
+          <label for="cambio">
+            <span class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 7H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M4 12H16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M4 17H13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              </svg>
+            </span>
+            Cambio
+          </label>
           <input id="cambio" name="cambio" type="text" required minlength="3" maxlength="120" placeholder="Ej. Ajuste en cirugía" />
         </div>
 
-        <div class="field">
-          <label for="descripcion">Descripción</label>
+        <div class="field field--full">
+          <label for="descripcion">
+            <span class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="3.5" width="16" height="17" rx="2.5" stroke="currentColor" stroke-width="1.8" />
+                <path d="M8 8.5H16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M8 12H16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path d="M8 15.5H13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              </svg>
+            </span>
+            Descripción
+          </label>
           <textarea id="descripcion" name="descripcion" required minlength="5" maxlength="1000" placeholder="Describe el cambio"></textarea>
         </div>
 
         <div class="field">
-          <label for="medico">Médico</label>
+          <label for="medico">
+            <span class="field-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.8" />
+                <path d="M5.5 19.5C6.6 16.8 9 15.5 12 15.5C15 15.5 17.4 16.8 18.5 19.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              </svg>
+            </span>
+            Médico
+          </label>
           <input id="medico" name="medico" type="text" required minlength="3" maxlength="120" placeholder="Nombre del médico" />
         </div>
 

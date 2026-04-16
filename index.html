@@ -93,6 +93,12 @@
         font-weight: 700;
         cursor: pointer;
       }
+
+      .status {
+        min-height: 1.25rem;
+        margin: 0;
+        color: var(--muted);
+      }
     </style>
   </head>
   <body>
@@ -100,7 +106,7 @@
       <h1>Registro de cambios en programación de médicos</h1>
       <p>Base inicial del proyecto para capturar cambios y conectarlos después con Google Apps Script.</p>
 
-      <form aria-label="Registro de cambios médicos">
+      <form id="change-form" aria-label="Registro de cambios médicos">
         <div class="field">
           <label for="fecha">Fecha</label>
           <input id="fecha" name="fecha" type="date" required />
@@ -127,7 +133,56 @@
         </div>
 
         <button type="submit">Guardar cambio</button>
+        <p id="status" class="status" aria-live="polite"></p>
       </form>
     </main>
+
+    <script>
+      (function () {
+        "use strict";
+
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/REPLACE_ME/exec";
+        const form = document.getElementById("change-form");
+        const statusEl = document.getElementById("status");
+
+        function setStatus(message) {
+          statusEl.textContent = message;
+        }
+
+        form.addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const formData = new FormData(form);
+          const payload = {
+            fecha: formData.get("fecha"),
+            cambio: formData.get("cambio"),
+            descripcion: formData.get("descripcion"),
+            medico: formData.get("medico"),
+            website: formData.get("website")
+          };
+
+          setStatus("Enviando...");
+
+          try {
+            const response = await fetch(APPS_SCRIPT_URL, {
+              method: "POST",
+              headers: {
+                "Content-Type": "text/plain;charset=UTF-8"
+              },
+              body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+              throw new Error("No se pudo enviar el formulario.");
+            }
+
+            form.reset();
+            setStatus("Formulario enviado correctamente.");
+          } catch (error) {
+            setStatus("Error al enviar el formulario.");
+          }
+        });
+      })();
+    </script>
   </body>
 </html>
